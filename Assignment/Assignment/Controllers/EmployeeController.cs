@@ -60,5 +60,22 @@ namespace Assignment.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("thirdhighestsalary")]
+        public async Task<ActionResult<Employee>> GetEmployeeWithThirdHighestSalary()
+        {
+            var employees = await _context.Employees
+                .OrderByDescending(e => e.EmployeeSalary)
+                .Skip(2) // Skip the first two highest salaries
+                .Take(1) // Take one employee
+                .FirstOrDefaultAsync();
+
+            if (employees == null)
+            {
+                return NotFound();
+            }
+
+            return employees;
+        }
     }
 }
