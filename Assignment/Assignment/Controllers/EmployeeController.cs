@@ -19,18 +19,13 @@ namespace Assignment.Controllers
         {
             _context = context;
         }
-        /*
-        public Employee ById(int id)
-        {
-            return AppDbContext.Employees.Where(x => x.EmployeeId == id).FirstOrDefault;
-        }*/
-
-        // PUT: api/Employee/UpdateDetails/5
-        // PUT: api/employees/{id}
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEmployee(int id, Employee updateDto)
         {
-            var employee = await _context.Employees.FindAsync(id);
+            try
+            {
+                var employee = await _context.Employees.FindAsync(id);
 
             if (employee == null)
             {
@@ -46,13 +41,15 @@ namespace Assignment.Controllers
                 return BadRequest("Employee code already exists.");
             }
 
-            employee.EmployeeName = updateDto.EmployeeName;
-            employee.EmployeeCode = updateDto.EmployeeCode;
+                employee.EmployeeName = updateDto.EmployeeName;
+                employee.EmployeeCode = updateDto.EmployeeCode;
+                employee.EmployeeSalary = updateDto.EmployeeSalary;
+                employee.SupervisorId = updateDto.SupervisorId;
 
-            _context.Entry(employee).State = EntityState.Modified;
 
-            try
-            {
+                _context.Entry(employee).State = EntityState.Modified;
+
+           
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
