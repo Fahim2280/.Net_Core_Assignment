@@ -19,7 +19,7 @@ namespace Assignment.Controllers
         {
             _context = context;
         }
-       
+        //API01#
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEmployee(int id, Employee updateDto)
         {
@@ -61,7 +61,7 @@ namespace Assignment.Controllers
             return NoContent();
         }
 
-
+        //API02#
         [HttpGet("thirdhighestsalary")]
         public async Task<ActionResult<Employee>> GetEmployeeWithThirdHighestSalary()
         {
@@ -80,6 +80,56 @@ namespace Assignment.Controllers
         }
 
 
-        
+        //API05#
+        [HttpGet("hierarchy/{employeeId}")]
+        public IActionResult GetHierarchy(int employeeId)
+        {
+            var hierarchy = GetHierarchyRecursive(employeeId);
+            if (hierarchy == null)
+            {
+                return NotFound("Employee not found");
+            }
+
+            return Ok(hierarchy);
+        }
+
+        private List<string> GetHierarchyRecursive(int employeeId, HashSet<int> visitedIds = null)
+        {
+            if (visitedIds == null)
+            {
+                visitedIds = new HashSet<int>();
+            }
+
+            if (visitedIds.Contains(employeeId))
+            {
+                return new List<string>();
+            }
+
+            visitedIds.Add(employeeId);
+
+            var employee = _context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
+            if (employee == null)
+            {
+                return null;
+            }
+
+            var hierarchy = new List<string> { employee.EmployeeName };
+
+            if (employee.SupervisorId.HasValue)
+            {
+                var supervisorHierarchy = GetHierarchyRecursive(employee.SupervisorId.Value, visitedIds);
+                if (supervisorHierarchy != null)
+                {
+                    hierarchy.AddRange(supervisorHierarchy);
+                }
+            }
+
+            return hierarchy;
+        }
     }
+
 }
+
+
+
+

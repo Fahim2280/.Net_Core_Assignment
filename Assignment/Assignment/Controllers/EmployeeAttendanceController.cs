@@ -21,8 +21,8 @@ namespace Assignment.Controllers
         {
             _context = context;
         }
-        
 
+        //API03#
         [HttpGet("maxsalarynoabsent")]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployeesMaxSalaryNoAbsent()
         {
@@ -47,33 +47,6 @@ namespace Assignment.Controllers
 
             return employees;
         }
-
-
-        [HttpGet("monthlyattendancereport")]
-        public async Task<ActionResult<IEnumerable<MonthlyAttendanceReport>>> GetMonthlyAttendanceReport()
-        {
-            var monthlyReport = await _context.EmployeeAttendances
-                .Where(a => a.IsPresent || a.IsAbsent || a.IsOffday)
-                .GroupBy(a => new { a.Employee.EmployeeName, a.AttendanceDate.Month })
-                .Select(g => new MonthlyAttendanceReport
-                {
-                    EmployeeName = g.Key.EmployeeName,
-                    MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(g.Key.Month),
-                    PayableSalary = g.First().Employee.EmployeeSalary,
-                    TotalPresent = g.Count(a => a.IsPresent),
-                    TotalAbsent = g.Count(a => a.IsAbsent),
-                    TotalOffday = g.Count(a => a.IsOffday)
-                })
-                .ToListAsync();
-
-            if (monthlyReport == null || monthlyReport.Count == 0)
-            {
-                return NotFound();
-            }
-
-            return monthlyReport;
-        }
-
 
     }
 }

@@ -15,7 +15,7 @@ namespace Assignment.Models
         [Required]
         public int? SupervisorId { get; set; }
 
-        public ICollection<EmployeeAttendance> EmployeeAttendances { get; set; }
+        public required ICollection<EmployeeAttendance> EmployeeAttendances { get; set; }
 
         
 

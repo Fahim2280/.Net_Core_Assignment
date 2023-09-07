@@ -18,6 +18,6 @@ namespace Assignment.Models
         [Required]
         public bool IsOffday { get; set; }
      
-       public virtual Employee? Employee { get; set; }
+       public virtual required Employee Employee { get; set; }
     }
 }
