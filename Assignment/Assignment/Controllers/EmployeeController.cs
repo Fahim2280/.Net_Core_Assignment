@@ -61,6 +61,7 @@ namespace Assignment.Controllers
             return NoContent();
         }
 
+
         [HttpGet("thirdhighestsalary")]
         public async Task<ActionResult<Employee>> GetEmployeeWithThirdHighestSalary()
         {
@@ -77,5 +78,8 @@ namespace Assignment.Controllers
 
             return employees;
         }
+
+
+        
     }
 }

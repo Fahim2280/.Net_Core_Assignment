@@ -7,5 +7,6 @@ namespace Assignment.Models
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeAttendance> EmployeeAttendances { get; set; }
+        public DbSet<MonthlyAttendanceReport> MonthlyAttendanceReports { get; set; }
     }
 }

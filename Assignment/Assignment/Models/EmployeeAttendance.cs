@@ -12,13 +12,12 @@ namespace Assignment.Models
         [Required]
         public DateTime AttendanceDate { get; set; }
         [Required]
-        public int IsPresent { get; set; }
+        public bool IsPresent { get; set; }
         [Required]
-        public int IsAbsent { get; set; }
+        public bool IsAbsent { get; set; }
         [Required]
-        public int IsOffday { get; set; }
-
-
-        public virtual Employee? Employee { get; set; }
+        public bool IsOffday { get; set; }
+     
+       public virtual Employee? Employee { get; set; }
     }
 }
