@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Assignment.Models
 {
@@ -14,10 +15,7 @@ namespace Assignment.Models
         public decimal EmployeeSalary { get; set; }
         [Required]
         public int? SupervisorId { get; set; }
-
-        public required ICollection<EmployeeAttendance> EmployeeAttendances { get; set; }
-
-        
-
+       
+        public ICollection<EmployeeAttendance>? EmployeeAttendances { get; set; }
     }
 }

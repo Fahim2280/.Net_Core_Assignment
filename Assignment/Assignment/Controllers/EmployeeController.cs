@@ -27,19 +27,19 @@ namespace Assignment.Controllers
             {
                 var employee = await _context.Employees.FindAsync(id);
 
-            if (employee == null)
-            {
-                return NotFound();
-            }
+                if (employee == null)
+                {
+                    return NotFound();
+                }
 
-            // Check for duplicate EmployeeCode
-            var existingEmployeeWithCode = await _context.Employees
-                .FirstOrDefaultAsync(e => e.EmployeeCode == updateDto.EmployeeCode && e.EmployeeId != id);
+                // Check for duplicate EmployeeCode
+                var existingEmployeeWithCode = await _context.Employees
+                    .FirstOrDefaultAsync(e => e.EmployeeCode == updateDto.EmployeeCode && e.EmployeeId != id);
 
-            if (existingEmployeeWithCode != null)
-            {
-                return BadRequest("Employee code already exists.");
-            }
+                if (existingEmployeeWithCode != null)
+                {
+                    return BadRequest("Employee code already exists.");
+                }
 
                 employee.EmployeeName = updateDto.EmployeeName;
                 employee.EmployeeCode = updateDto.EmployeeCode;
@@ -49,7 +49,7 @@ namespace Assignment.Controllers
 
                 _context.Entry(employee).State = EntityState.Modified;
 
-           
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

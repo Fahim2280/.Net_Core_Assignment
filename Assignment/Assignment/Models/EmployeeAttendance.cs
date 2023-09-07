@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Assignment.Models
 {
@@ -17,7 +18,7 @@ namespace Assignment.Models
         public bool IsAbsent { get; set; }
         [Required]
         public bool IsOffday { get; set; }
-     
-       public virtual required Employee Employee { get; set; }
+        
+        public virtual required Employee Employee { get; set; }
     }
 }

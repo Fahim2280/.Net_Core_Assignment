@@ -21,7 +21,7 @@ namespace Assignment.Controllers
         {
             _context = context;
         }
-
+        
         //API03#
         [HttpGet("maxsalarynoabsent")]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployeesMaxSalaryNoAbsent()
@@ -47,7 +47,7 @@ namespace Assignment.Controllers
 
             return employees;
         }
-
+        
     }
 }
 
