@@ -47,7 +47,6 @@ namespace Assignment.Controllers
             return employees; // Return the list of EmployeeDto
         }
 
-
     }
 }
 
