@@ -1,4 +1,5 @@
-﻿using Assignment.Models;
+﻿using Assignment.DTO;
+using Assignment.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,9 +20,10 @@ namespace Assignment.Controllers
         {
             _context = context;
         }
+
         //API01#
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, Employee updateDto)
+        public async Task<IActionResult> UpdateEmployee(int id, EmployeeDto updateDto)
         {
             try
             {

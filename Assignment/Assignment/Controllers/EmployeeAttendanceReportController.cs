@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
+using Assignment.DTO;
 
 namespace Assignment.Controllers
 {
@@ -24,12 +25,12 @@ namespace Assignment.Controllers
 
         //API05#
         [HttpGet("monthlyattendancereport")]
-        public async Task<ActionResult<IEnumerable<MonthlyAttendanceReport>>> GetMonthlyAttendanceReport()
+        public async Task<ActionResult<IEnumerable<MonthlyAttendanceReportDto>>> GetMonthlyAttendanceReport()
         {
             var monthlyReport = await _context.EmployeeAttendances
                 .Where(a => a.IsPresent || a.IsAbsent || a.IsOffday)
                 .GroupBy(a => new { a.Employee.EmployeeName, a.AttendanceDate.Month })
-                .Select(g => new MonthlyAttendanceReport
+                .Select(g => new MonthlyAttendanceReportDto
                 {
                     EmployeeName = g.Key.EmployeeName,
                     MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(g.Key.Month),

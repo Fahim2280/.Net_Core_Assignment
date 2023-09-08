@@ -1,12 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Assignment.Models
+namespace Assignment.DTO
 {
-    public class MonthlyAttendanceReport
+    public class MonthlyAttendanceReportDto
     {
-        [Key]
-        public int Id { get; set; }
         [Required]
         public required string EmployeeName { get; set; }
         [Required]
