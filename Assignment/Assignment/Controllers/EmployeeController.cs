@@ -65,20 +65,27 @@ namespace Assignment.Controllers
 
         //API02#
         [HttpGet("thirdhighestsalary")]
-        public async Task<ActionResult<Employee>> GetEmployeeWithThirdHighestSalary()
+        public async Task<ActionResult<EmployeeDto>> GetEmployeeWithThirdHighestSalary()
         {
-            var employees = await _context.Employees
+            var employee = await _context.Employees
                 .OrderByDescending(e => e.EmployeeSalary)
                 .Skip(2) // Skip the first two highest salaries
                 .Take(1) // Take one employee
                 .FirstOrDefaultAsync();
 
-            if (employees == null)
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            return employees;
+            return new EmployeeDto
+            {
+                EmployeeId = employee.EmployeeId,
+                EmployeeName = employee.EmployeeName,
+                EmployeeCode = employee.EmployeeCode,
+                EmployeeSalary = employee.EmployeeSalary,
+                SupervisorId = employee.SupervisorId
+            };
         }
 
 
@@ -95,7 +102,7 @@ namespace Assignment.Controllers
             return Ok(hierarchy);
         }
 
-        private List<string> GetHierarchyRecursive(int employeeId, HashSet<int> visitedIds = null)
+        private List<string>? GetHierarchyRecursive(int employeeId, HashSet<int>? visitedIds = null)
         {
             if (visitedIds == null)
             {

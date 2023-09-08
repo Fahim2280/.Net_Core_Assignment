@@ -21,22 +21,21 @@ namespace Assignment.Controllers
         {
             _context = context;
         }
-        
+
         //API03#
         [HttpGet("maxsalarynoabsent")]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployeesMaxSalaryNoAbsent()
+        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployeesMaxSalaryNoAbsent()
         {
             var employees = await _context.Employees
                 .Where(e => !e.EmployeeAttendances.Any(a => a.IsAbsent))
                 .OrderByDescending(e => e.EmployeeSalary)
-                .Select(e => new Employee
+                .Select(e => new EmployeeDto // Use EmployeeDto here
                 {
                     EmployeeId = e.EmployeeId,
                     EmployeeName = e.EmployeeName,
                     EmployeeCode = e.EmployeeCode,
                     EmployeeSalary = e.EmployeeSalary,
-                    SupervisorId = e.SupervisorId,
-                    EmployeeAttendances = e.EmployeeAttendances
+                    SupervisorId = e.SupervisorId
                 })
                 .ToListAsync();
 
@@ -45,9 +44,10 @@ namespace Assignment.Controllers
                 return NotFound();
             }
 
-            return employees;
+            return employees; // Return the list of EmployeeDto
         }
-        
+
+
     }
 }
 
