@@ -26,7 +26,9 @@ namespace Assignment.Controllers
         [HttpGet("maxsalarynoabsent")]
         public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployeesMaxSalaryNoAbsent()
         {
-            var employees = await _context.Employees
+            try
+            {
+                var employees = await _context.Employees
                 .Where(e => !e.EmployeeAttendances.Any(a => a.IsAbsent))
                 .OrderByDescending(e => e.EmployeeSalary)
                 .Select(e => new EmployeeDto // Use EmployeeDto here
@@ -39,12 +41,19 @@ namespace Assignment.Controllers
                 })
                 .ToListAsync();
 
-            if (employees == null || employees.Count == 0)
-            {
-                return NotFound();
-            }
+                if (employees == null || employees.Count == 0)
+                {
+                    return NotFound();
+                }
 
-            return employees; // Return the list of EmployeeDto
+                return employees; // Return the list of EmployeeDto
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Handle concurrency exception
+                return StatusCode(500, "An error occurred while saving the changes.");
+            }
+            
         }
 
     }

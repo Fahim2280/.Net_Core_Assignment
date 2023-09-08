@@ -27,7 +27,9 @@ namespace Assignment.Controllers
         [HttpGet("monthlyattendancereport")]
         public async Task<ActionResult<IEnumerable<MonthlyAttendanceReportDto>>> GetMonthlyAttendanceReport()
         {
-            var monthlyReport = await _context.EmployeeAttendances
+            try
+            {
+                var monthlyReport = await _context.EmployeeAttendances
                 .Where(a => a.IsPresent || a.IsAbsent || a.IsOffday)
                 .GroupBy(a => new { a.Employee.EmployeeName, a.AttendanceDate.Month })
                 .Select(g => new MonthlyAttendanceReportDto
@@ -41,14 +43,18 @@ namespace Assignment.Controllers
                 })
                 .ToListAsync();
 
-            if (monthlyReport == null || monthlyReport.Count == 0)
-            {
-                return NotFound();
+                if (monthlyReport == null || monthlyReport.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                return monthlyReport;
             }
-
-            return monthlyReport;
+            catch (DbUpdateConcurrencyException)
+            {
+                // Handle concurrency exception
+                return StatusCode(500, "An error occurred while saving the changes.");
+            }
         }
-
-
     }
 }

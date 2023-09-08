@@ -1,5 +1,6 @@
 ﻿using Assignment.DTO;
 using Assignment.Models;
+using Assignment.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,6 +15,7 @@ namespace Assignment.Controllers
     [ApiController]
     public class EmployeeController : Controller
     {
+        
         private readonly AppDbContext _context;
 
         public EmployeeController(AppDbContext context)
@@ -62,30 +64,39 @@ namespace Assignment.Controllers
 
             return NoContent();
         }
-
+        
         //API02#
         [HttpGet("thirdhighestsalary")]
         public async Task<ActionResult<EmployeeDto>> GetEmployeeWithThirdHighestSalary()
         {
-            var employee = await _context.Employees
+            try
+            {
+                var employee = await _context.Employees
                 .OrderByDescending(e => e.EmployeeSalary)
                 .Skip(2) // Skip the first two highest salaries
                 .Take(1) // Take one employee
                 .FirstOrDefaultAsync();
 
-            if (employee == null)
-            {
-                return NotFound();
-            }
+                if (employee == null)
+                {
+                    return NotFound();
+                }
 
-            return new EmployeeDto
+                return new EmployeeDto
+                {
+                    EmployeeId = employee.EmployeeId,
+                    EmployeeName = employee.EmployeeName,
+                    EmployeeCode = employee.EmployeeCode,
+                    EmployeeSalary = employee.EmployeeSalary,
+                    SupervisorId = employee.SupervisorId
+                };
+
+            }
+            catch (DbUpdateConcurrencyException)
             {
-                EmployeeId = employee.EmployeeId,
-                EmployeeName = employee.EmployeeName,
-                EmployeeCode = employee.EmployeeCode,
-                EmployeeSalary = employee.EmployeeSalary,
-                SupervisorId = employee.SupervisorId
-            };
+                // Handle concurrency exception
+                return StatusCode(500, "An error occurred while saving the changes.");
+            }   
         }
 
 
@@ -93,48 +104,87 @@ namespace Assignment.Controllers
         [HttpGet("hierarchy/{employeeId}")]
         public IActionResult GetHierarchy(int employeeId)
         {
-            var hierarchy = GetHierarchyRecursive(employeeId);
-            if (hierarchy == null)
+            try
             {
-                return NotFound("Employee not found");
+                var hierarchy = GetHierarchyRecursive(employeeId);
+                if (hierarchy == null)
+                {
+                    return NotFound("Employee not found");
+                }
+
+                return Ok(hierarchy);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Handle concurrency exception
+                return StatusCode(500, "An error occurred while saving the changes.");
             }
 
-            return Ok(hierarchy);
         }
 
         private List<string>? GetHierarchyRecursive(int employeeId, HashSet<int>? visitedIds = null)
         {
-            if (visitedIds == null)
-            {
-                visitedIds = new HashSet<int>();
-            }
-
-            if (visitedIds.Contains(employeeId))
-            {
-                return new List<string>();
-            }
-
-            visitedIds.Add(employeeId);
-
-            var employee = _context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
-            if (employee == null)
-            {
-                return null;
-            }
-
-            var hierarchy = new List<string> { employee.EmployeeName };
-
-            if (employee.SupervisorId.HasValue)
-            {
-                var supervisorHierarchy = GetHierarchyRecursive(employee.SupervisorId.Value, visitedIds);
-                if (supervisorHierarchy != null)
+                if (visitedIds == null)
                 {
-                    hierarchy.AddRange(supervisorHierarchy);
+                    visitedIds = new HashSet<int>();
                 }
-            }
 
-            return hierarchy;
+                if (visitedIds.Contains(employeeId))
+                {
+                    return new List<string>();
+                }
+
+                visitedIds.Add(employeeId);
+
+                var employee = _context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
+                if (employee == null)
+                {
+                    return null;
+                }
+
+                var hierarchy = new List<string> { employee.EmployeeName };
+
+                if (employee.SupervisorId.HasValue)
+                {
+                    var supervisorHierarchy = GetHierarchyRecursive(employee.SupervisorId.Value, visitedIds);
+                    if (supervisorHierarchy != null)
+                    {
+                        hierarchy.AddRange(supervisorHierarchy);
+                    }
+                }
+
+                return hierarchy;      
         }
+
+        /*
+        private readonly IEmployeeService _employeeService;
+
+        public EmployeeController(IEmployeeService employeeService)
+        {
+            _employeeService = employeeService;
+        }
+        */
+
+        /*
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEmployee(int id, EmployeeDto updateDto)
+        {
+            try
+            {
+                var updatedEmployee = await _employeeService.UpdateEmployee(id, updateDto);
+
+                if (updatedEmployee == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(updatedEmployee);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500, "An error occurred while saving the changes.");
+            }
+        }*/
     }
 
 }
